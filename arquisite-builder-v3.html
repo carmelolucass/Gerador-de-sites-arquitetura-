@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArquiSite Builder — Painel de Edição</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #0c0b0a;
+  color: #e8e0d8;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Material icon helper */
+.mi {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2520; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3530; }
+
+/* ===== TOP BAR ===== */
+.topbar {
+  height: 56px;
+  background: linear-gradient(180deg, #161412 0%, #121110 100%);
+  border-bottom: 1px solid rgba(196, 151, 106, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  flex-shrink: 0;
+  gap: 16px;
+  z-index: 100;
+  position: relative;
+}
+.topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(196, 151, 106, 0.15) 50%, transparent 100%);
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.topbar-logo {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #c4976a 0%, #a07850 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.1rem;
+  color: #1a1512;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(196, 151, 106, 0.25);
+}
+.topbar-brand-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1rem;
+  color: #c4976a;
+  letter-spacing: 0.02em;
+}
+.topbar-brand-text span { color: #665545; font-weight: 300; }
+
+.topbar-client {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  color: #a09080;
+  flex: 1;
+  max-width: 240px;
+  transition: all 0.3s;
+}
+.topbar-client:focus-within {
+  border-color: rgba(196, 151, 106, 0.3);
+  background: rgba(196, 151, 106, 0.04);
+  box-shadow: 0 0 0 3px rgba(196, 151, 106, 0.06);
+}
+.topbar-client .mi { font-size: 16px; color: #554535; }
+.topbar-client input {
+  background: none;
+  border: none;
+  outline: none;
+  color: #e8e0d8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  width: 100%;
+}
+
+.topbar-actions { display: flex; gap: 8px; }
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.btn-sm .mi { font-size: 16px; }
+.btn-preview {
+  background: rgba(255,255,255,0.04);
+  color: #a09080;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.btn-preview:hover { color: #e8e0d8; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.07); }
+.btn-export {
+  background: linear-gradient(135deg, #c4976a 0%, #b08558 100%);
+  color: #1a1512;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(196, 151, 106, 0.25);
+}
+.btn-export:hover { background: linear-gradient(135deg, #d4a77a 0%, #c09568 100%); box-shadow: 0 4px 16px rgba(196, 151, 106, 0.35); transform: translateY(-1px); }
+.btn-reset { background: transparent; color: #554535; }
+.btn-reset:hover { color: #a09080; background: rgba(255,255,255,0.03); }
+
+/* ===== MAIN LAYOUT ===== */
+.workspace { display: flex; flex: 1; overflow: hidden; }
+
+/* ===== LEFT PANEL ===== */
+.panel-left {
+  width: 300px;
+  min-width: 300px;
+  background: #111010;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.panel-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+  padding: 0 8px;
+  gap: 2px;
+  background: rgba(0,0,0,0.2);
+}
+.panel-tab {
+  flex: 1;
+  padding: 14px 4px 12px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+  color: #554535;
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+}
+.panel-tab .mi { font-size: 18px; }
+.panel-tab.active {
+  color: #c4976a;
+  border-bottom-color: #c4976a;
+  background: rgba(196, 151, 106, 0.04);
+}
+.panel-tab:hover:not(.active) { color: #8a7a6a; background: rgba(255,255,255,0.02); }
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+}
+
+/* ===== SECTIONS LIST ===== */
+.sections-header {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #443828;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sections-header .mi { font-size: 14px; }
+
+.section-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: grab;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.section-item:active { cursor: grabbing; }
+.section-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+.section-item.dragging { opacity: 0.4; transform: scale(0.97); }
+.section-item.drag-over {
+  border-color: rgba(196, 151, 106, 0.4);
+  background: rgba(196, 151, 106, 0.06);
+  box-shadow: 0 0 0 3px rgba(196, 151, 106, 0.08);
+}
+.section-item.disabled { opacity: 0.3; }
+.section-item-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+}
+.section-drag-handle {
+  color: #2a2520;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+.section-item:hover .section-drag-handle { color: #554535; }
+.section-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(196, 151, 106, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.section-name {
+  font-size: 0.8rem;
+  color: #b8a898;
+  flex: 1;
+  font-weight: 400;
+}
+
+/* Toggle switch */
+.section-toggle {
+  width: 36px;
+  height: 20px;
+  background: #252220;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  border: none;
+}
+.section-toggle.on {
+  background: linear-gradient(135deg, #c4976a 0%, #a07850 100%);
+  box-shadow: 0 0 12px rgba(196, 151, 106, 0.25);
+}
+.section-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.section-toggle.on::after { transform: translateX(16px); }
+
+/* ===== STYLE PANEL ===== */
+.style-group { margin-bottom: 28px; }
+.style-group-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #554535;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.style-group-label .mi { font-size: 15px; }
+
+.color-palettes { display: flex; flex-direction: column; gap: 6px; }
+.palette-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.palette-option:hover { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); }
+.palette-option.active {
+  border-color: rgba(196, 151, 106, 0.4);
+  background: rgba(196, 151, 106, 0.06);
+}
+.palette-option.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #c4976a;
+  border-radius: 0 2px 2px 0;
+}
+.palette-swatches { display: flex; gap: 4px; }
+.swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.palette-name { font-size: 0.75rem; color: #a09080; font-weight: 400; }
+
+.font-options { display: flex; flex-direction: column; gap: 6px; }
+.font-option {
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.font-option:hover { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); }
+.font-option.active {
+  border-color: rgba(196, 151, 106, 0.4);
+  background: rgba(196, 151, 106, 0.06);
+}
+.font-option.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #c4976a;
+  border-radius: 0 2px 2px 0;
+}
+.font-preview { font-size: 1rem; color: #e8e0d8; }
+.font-meta { font-size: 0.65rem; color: #443828; }
+
+/* Custom colors */
+.color-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.color-input-group { }
+.color-input-group label {
+  font-size: 0.6rem;
+  color: #554535;
+  display: block;
+  margin-bottom: 5px;
+  letter-spacing: 0.05em;
+}
+.color-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.color-input-row input[type="color"] {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: #1e1b18;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.color-input-row input[type="color"]:hover { border-color: rgba(196, 151, 106, 0.3); }
+.color-input-row input[type="text"] {
+  flex: 1;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #a09080;
+  font-size: 0.72rem;
+  padding: 7px 10px;
+  font-family: 'DM Sans', monospace;
+  outline: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.color-input-row input[type="text"]:focus {
+  border-color: rgba(196, 151, 106, 0.4);
+  background: rgba(196, 151, 106, 0.04);
+}
+
+/* ===== DATA PANEL ===== */
+.data-field { margin-bottom: 16px; }
+.data-field label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #554535;
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.data-field input, .data-field textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #e8e0d8;
+  font-size: 0.8rem;
+  padding: 10px 12px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: all 0.25s;
+  border-radius: 8px;
+}
+.data-field input:focus, .data-field textarea:focus {
+  border-color: rgba(196, 151, 106, 0.4);
+  background: rgba(196, 151, 106, 0.04);
+  box-shadow: 0 0 0 3px rgba(196, 151, 106, 0.06);
+}
+.data-field textarea { min-height: 72px; resize: vertical; }
+.data-field .hint {
+  font-size: 0.6rem;
+  color: #3a3025;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.data-section-title {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c4976a;
+  margin: 24px 0 14px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.data-section-title .mi { font-size: 16px; }
+
+/* Testimonials */
+.testimonial-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 14px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+.testimonial-item:hover { border-color: rgba(255,255,255,0.08); }
+.testimonial-item input, .testimonial-item textarea {
+  width: 100%;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #c8b8a8;
+  font-size: 0.75rem;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.testimonial-item input:focus, .testimonial-item textarea:focus {
+  border-color: rgba(196, 151, 106, 0.3);
+}
+.testimonial-item textarea { min-height: 56px; resize: vertical; }
+.t-label {
+  font-size: 0.58rem;
+  color: #554535;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+/* Photos panel */
+.photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.photo-slot {
+  aspect-ratio: 1;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.photo-slot:hover {
+  border-color: rgba(196, 151, 106, 0.3);
+  background: rgba(196, 151, 106, 0.04);
+  transform: translateY(-2px);
+}
+.photo-slot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-slot-label { font-size: 0.6rem; color: #443828; text-align: center; margin-top: 4px; }
+.photo-slot-icon { font-size: 1.2rem; color: #2a2520; }
+.photo-slot input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.7);
+  border: none;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 0.6rem;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+.photo-slot:hover .photo-remove { display: flex; }
+.photo-slot-name {
+  font-size: 0.58rem;
+  color: #a09080;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 4px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  letter-spacing: 0.05em;
+}
+
+/* ===== PREVIEW AREA ===== */
+.preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #0a0908;
+  position: relative;
+}
+.preview-toolbar {
+  height: 44px;
+  background: #0f0e0d;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+.preview-device-btns { display: flex; gap: 4px; }
+.device-btn {
+  padding: 5px 12px;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #443828;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: 'DM Sans', sans-serif;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+.device-btn .mi { font-size: 15px; }
+.device-btn.active,
+.device-btn:hover {
+  color: #c4976a;
+  border-color: rgba(196, 151, 106, 0.25);
+  background: rgba(196, 151, 106, 0.06);
+}
+.preview-url {
+  font-size: 0.68rem;
+  color: #2a2520;
+  font-family: 'DM Sans', monospace;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.02);
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.preview-url .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4a8;
+  box-shadow: 0 0 6px rgba(68, 170, 136, 0.4);
+}
+.preview-refresh {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #443828;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.25s;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.preview-refresh .mi { font-size: 16px; }
+.preview-refresh:hover { color: #c4976a; border-color: rgba(196, 151, 106, 0.25); }
+
+.preview-frame-wrap {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at center, #0f0e0d 0%, #080807 100%);
+}
+.preview-container {
+  background: white;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 24px 80px rgba(0,0,0,0.6);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border-radius: 8px;
+}
+.preview-container.desktop { width: 100%; max-width: 1280px; }
+.preview-container.tablet { width: 768px; }
+.preview-container.mobile { width: 375px; border-radius: 24px; }
+iframe#preview {
+  width: 100%;
+  border: none;
+  display: block;
+  min-height: 600px;
+}
+
+/* ===== STATUS BAR ===== */
+.statusbar {
+  height: 28px;
+  background: #0a0908;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4a8;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(68, 170, 136, 0.4);
+  animation: pulse-dot 3s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.status-text { font-size: 0.62rem; color: #2a2520; }
+.status-text span { color: #554535; }
+
+/* ===== PANEL VISIBILITY ===== */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeSlideIn 0.3s ease; }
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== DRAG GHOST ===== */
+.drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  background: rgba(196, 151, 106, 0.15);
+  border: 1px solid rgba(196, 151, 106, 0.4);
+  padding: 8px 14px;
+  font-size: 0.75rem;
+  color: #c4976a;
+  opacity: 0.9;
+  border-radius: 8px;
+  backdrop-filter: blur(12px);
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1e1b18;
+  border: 1px solid rgba(196, 151, 106, 0.2);
+  color: #e8e0d8;
+  padding: 10px 22px;
+  font-size: 0.78rem;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  border-radius: 10px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toast .mi { font-size: 18px; color: #c4976a; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== QUICK ACTIONS ===== */
+.quick-actions {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+.quick-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(20, 18, 16, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #665545;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.quick-btn:hover {
+  background: rgba(196, 151, 106, 0.12);
+  color: #c4976a;
+  border-color: rgba(196, 151, 106, 0.25);
+  transform: scale(1.08);
+}
+.quick-btn .mi { font-size: 18px; }
+
+/* ===== ZOOM CONTROL ===== */
+.zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+  color: #443828;
+}
+.zoom-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #443828;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: 'DM Sans';
+  font-size: 0.8rem;
+}
+.zoom-btn:hover { color: #c4976a; border-color: rgba(196, 151, 106, 0.25); }
+.zoom-val { min-width: 36px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">A</div>
+    <div class="topbar-brand-text">ArquiSite <span>Builder</span></div>
+  </div>
+  <div class="topbar-client">
+    <span class="mi">person</span>
+    <input type="text" id="clientName" placeholder="Nome do cliente..." value="Alana Dal Piaz">
+  </div>
+  <div class="topbar-actions">
+    <button class="btn-sm btn-reset" onclick="resetToDefaults()"><span class="mi">restart_alt</span> Reset</button>
+    <button class="btn-sm btn-preview" onclick="openFullPreview()"><span class="mi">open_in_new</span> Tela Cheia</button>
+    <button class="btn-sm btn-export" onclick="exportSite()"><span class="mi">download</span> Exportar</button>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT PANEL -->
+  <div class="panel-left">
+    <div class="panel-tabs">
+      <button class="panel-tab active" data-tab="sections"><span class="mi">dashboard</span>Seções</button>
+      <button class="panel-tab" data-tab="style"><span class="mi">palette</span>Estilo</button>
+      <button class="panel-tab" data-tab="data"><span class="mi">edit_note</span>Dados</button>
+      <button class="panel-tab" data-tab="photos"><span class="mi">photo_library</span>Fotos</button>
+    </div>
+
+    <!-- TAB: SEÇÕES -->
+    <div class="panel-content tab-panel active" id="tab-sections">
+      <div class="sections-header"><span class="mi">drag_indicator</span> Arraste para reordenar</div>
+      <div id="sectionsList"></div>
+    </div>
+
+    <!-- TAB: ESTILO -->
+    <div class="panel-content tab-panel" id="tab-style">
+      <div class="style-group">
+        <span class="style-group-label"><span class="mi">color_lens</span> Paleta de Cores</span>
+        <div class="color-palettes" id="paletteList"></div>
+      </div>
+      <div class="style-group">
+        <span class="style-group-label"><span class="mi">tune</span> Cores Personalizadas</span>
+        <div class="color-inputs" id="colorCustom"></div>
+      </div>
+      <div class="style-group">
+        <span class="style-group-label"><span class="mi">text_fields</span> Tipografia</span>
+        <div class="font-options" id="fontList"></div>
+      </div>
+    </div>
+
+    <!-- TAB: DADOS -->
+    <div class="panel-content tab-panel" id="tab-data">
+      <div class="data-section-title" style="border:none; padding:0; margin-top:0;"><span class="mi">badge</span> Informações Básicas</div>
+      <div class="data-field"><label>Nome / Marca</label><input id="d-name" type="text" value="Alana Dal Piaz" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Cidade / Estado</label><input id="d-city" type="text" value="Aracaju, SE" oninput="updatePreview()"></div>
+      <div class="data-field">
+        <label>Título Hero — Parte Normal</label>
+        <input id="d-slogan" type="text" value="Espaços que contam" oninput="updatePreview()">
+        <div class="hint">Texto em branco, fonte normal</div>
+      </div>
+      <div class="data-field">
+        <label>Título Hero — Parte em Destaque</label>
+        <input id="d-slogan2" type="text" value="a sua história" oninput="updatePreview()">
+        <div class="hint">Texto em itálico na cor de destaque</div>
+      </div>
+      <div class="data-field">
+        <label>Tag Hero (acima do título)</label>
+        <input id="d-hero-tag" type="text" value="Arquitetura & Design" oninput="updatePreview()">
+      </div>
+      <div class="data-field"><label>Descrição Hero</label><textarea id="d-desc" oninput="updatePreview()">Cada projeto nasce de uma escuta cuidadosa. Transformamos ambientes em experiências que refletem quem você é.</textarea></div>
+      <div class="data-field"><label>Botão Primário (CTA)</label><input id="d-cta1" type="text" value="Solicitar Orçamento" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Botão Secundário</label><input id="d-cta2" type="text" value="Ver Projetos →" oninput="updatePreview()"></div>
+
+      <div class="data-section-title"><span class="mi">call</span> Contato</div>
+      <div class="data-field"><label>WhatsApp (com DDD)</label><input id="d-whats" type="text" value="79991931873" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Instagram (sem @)</label><input id="d-insta" type="text" value="dalpiazarquitetura" oninput="updatePreview()"></div>
+      <div class="data-field"><label>E-mail</label><input id="d-email" type="text" value="contato@dalpiaz.arq.br" oninput="updatePreview()"></div>
+
+      <div class="data-section-title"><span class="mi">monitoring</span> Números (Stats)</div>
+      <div class="data-field"><label>Projetos Realizados</label><input id="d-stat1" type="text" value="80+" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Clientes Satisfeitos</label><input id="d-stat2" type="text" value="65+" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Anos de Experiência</label><input id="d-stat3" type="text" value="7+" oninput="updatePreview()"></div>
+
+      <div class="data-section-title"><span class="mi">person</span> Sobre</div>
+      <div class="data-field"><label>Parágrafo 1</label><textarea id="d-about1" oninput="updatePreview()">Arquiteta formada pela Universidade Tiradentes (SE), com Pós-Graduação em Design de Interiores pela PUC-RS. Especializada em projetos residenciais, comerciais e de interiores.</textarea></div>
+      <div class="data-field"><label>Parágrafo 2</label><textarea id="d-about2" oninput="updatePreview()">Minha paixão é transformar espaços, unindo estética, funcionalidade e conforto para criar ambientes que refletem a personalidade e as necessidades de cada cliente.</textarea></div>
+
+      <div class="data-section-title"><span class="mi">title</span> Títulos das Seções</div>
+      <div class="data-field"><label>Portfólio — Tag</label><input id="d-t-portfolio-tag" type="text" value="Nosso Trabalho" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Portfólio — Título (normal)</label><input id="d-t-portfolio1" type="text" value="Projetos que" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Portfólio — Título (destaque)</label><input id="d-t-portfolio2" type="text" value="inspiram" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Sobre — Tag</label><input id="d-t-sobre-tag" type="text" value="Quem sou eu" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Sobre — Título (normal)</label><input id="d-t-sobre1" type="text" value="Arquitetura com" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Sobre — Título (destaque)</label><input id="d-t-sobre2" type="text" value="propósito" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Serviços — Tag</label><input id="d-t-serv-tag" type="text" value="O que ofereço" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Serviços — Título (normal)</label><input id="d-t-serv1" type="text" value="Serviços" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Serviços — Título (destaque)</label><input id="d-t-serv2" type="text" value="personalizados" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Contato — Título (normal)</label><input id="d-t-cont1" type="text" value="Seu projeto começa" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Contato — Título (destaque)</label><input id="d-t-cont2" type="text" value="aqui" oninput="updatePreview()"></div>
+
+      <div class="data-section-title"><span class="mi">design_services</span> Textos dos Serviços</div>
+      <div class="data-field"><label>Serviço 1 — Nome</label><input id="d-s1-title" type="text" value="Projeto Residencial" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Serviço 1 — Descrição</label><textarea id="d-s1-desc" oninput="updatePreview()">Do conceito à execução, criamos lares que equilibram estética, conforto e funcionalidade.</textarea></div>
+      <div class="data-field"><label>Serviço 2 — Nome</label><input id="d-s2-title" type="text" value="Design de Interiores" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Serviço 2 — Descrição</label><textarea id="d-s2-desc" oninput="updatePreview()">Ambientes com identidade própria, materiais cuidadosamente selecionados e harmonia em cada detalhe.</textarea></div>
+      <div class="data-field"><label>Serviço 3 — Nome</label><input id="d-s3-title" type="text" value="Projeto Comercial" oninput="updatePreview()"></div>
+      <div class="data-field"><label>Serviço 3 — Descrição</label><textarea id="d-s3-desc" oninput="updatePreview()">Espaços corporativos que comunicam a essência da sua marca e otimizam a experiência do cliente.</textarea></div>
+
+      <div class="data-section-title"><span class="mi">format_quote</span> Depoimentos</div>
+      <div id="testimonialsList"></div>
+    </div>
+
+    <!-- TAB: FOTOS -->
+    <div class="panel-content tab-panel" id="tab-photos">
+      <div class="sections-header"><span class="mi">add_photo_alternate</span> Clique nos slots para carregar</div>
+      <div style="margin-bottom:16px;">
+        <span class="style-group-label"><span class="mi">wallpaper</span> Foto do Hero (fundo)</span>
+        <div class="photo-slot" style="height:110px; width:100%;" onclick="triggerPhoto('photo-hero')">
+          <input type="file" id="photo-hero" accept="image/*" onchange="loadPhoto(this,'slot-hero')" style="display:none">
+          <div id="slot-hero-content">
+            <div class="photo-slot-icon">🌄</div>
+            <div class="photo-slot-label">Foto de fundo do Hero</div>
+          </div>
+          <img id="slot-hero" style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div style="font-size:.62rem;color:#554535;margin-top:5px;padding:0 2px">Se vazia, usa gradiente de cor. A foto fica escurecida automaticamente.</div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <span class="style-group-label"><span class="mi">account_circle</span> Foto da Arquiteta</span>
+        <div class="photo-slot" style="height:150px; width:100%; border-radius:12px;" onclick="triggerPhoto('photo-architect')">
+          <input type="file" id="photo-architect" accept="image/*" onchange="loadPhoto(this,'slot-architect')" style="display:none">
+          <div id="slot-architect-content">
+            <div class="photo-slot-icon">👤</div>
+            <div class="photo-slot-label">Foto de Perfil</div>
+          </div>
+          <img id="slot-architect" style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position: center top;">
+        </div>
+      </div>
+      <span class="style-group-label"><span class="mi">collections</span> Portfólio (6 fotos)</span>
+      <div class="photos-grid" id="portfolioPhotos"></div>
+    </div>
+  </div>
+
+  <!-- PREVIEW AREA -->
+  <div class="preview-area">
+    <div class="preview-toolbar">
+      <div class="preview-device-btns">
+        <button class="device-btn active" onclick="setDevice('desktop', this)"><span class="mi">desktop_windows</span>Desktop</button>
+        <button class="device-btn" onclick="setDevice('tablet', this)"><span class="mi">tablet_mac</span>Tablet</button>
+        <button class="device-btn" onclick="setDevice('mobile', this)"><span class="mi">smartphone</span>Mobile</button>
+      </div>
+      <div class="preview-url"><div class="dot"></div><span id="previewUrl">alana-dalpiaz.vercel.app</span></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="zoom-control">
+          <button class="zoom-btn" onclick="zoomPreview(-10)">−</button>
+          <span class="zoom-val" id="zoomVal">100%</span>
+          <button class="zoom-btn" onclick="zoomPreview(10)">+</button>
+        </div>
+        <button class="preview-refresh" onclick="refreshPreview()"><span class="mi">refresh</span></button>
+      </div>
+    </div>
+    <div class="preview-frame-wrap">
+      <div class="preview-container desktop" id="previewContainer">
+        <iframe id="preview" srcdoc="" scrolling="yes"></iframe>
+      </div>
+    </div>
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="openFullPreview()" title="Abrir em nova aba"><span class="mi">open_in_new</span></button>
+      <button class="quick-btn" onclick="exportSite()" title="Exportar HTML"><span class="mi">download</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="status-dot"></div>
+  <div class="status-text">Pronto · <span id="statusMsg">Edite as configurações para ver o preview atualizar</span></div>
+  <div class="status-text" style="margin-left:auto;" id="statusTime"></div>
+</div>
+
+<div class="toast" id="toast"><span class="mi">check_circle</span><span id="toastText"></span></div>
+
+<script>
+// ===== STATE =====
+const state = {
+  sections: [
+    { id: 'hero',         name: 'Hero',          icon: '🏠', enabled: true },
+    { id: 'stats',        name: 'Números',        icon: '📊', enabled: true },
+    { id: 'portfolio',    name: 'Portfólio',      icon: '🖼', enabled: true },
+    { id: 'sobre',        name: 'Sobre',          icon: '👤', enabled: true },
+    { id: 'servicos',     name: 'Serviços',       icon: '✦', enabled: true },
+    { id: 'depoimentos',  name: 'Depoimentos',    icon: '💬', enabled: true },
+    { id: 'processo',     name: 'Processo',       icon: '🔄', enabled: true },
+    { id: 'contato',      name: 'Contato',        icon: '📩', enabled: true },
+  ],
+  palette: 'terra',
+  font: 'cormorant',
+  customColors: {
+    primary: '#8B6F5C',
+    accent: '#C4976A',
+    bg: '#FAF7F4',
+    dark: '#2C2420',
+  },
+  photos: {},
+  testimonials: [
+    { quote: 'A Alana transformou nossa casa em algo que mal reconhecemos — no bom sentido. Cada detalhe foi pensado com cuidado.', name: 'Maria e João Silva', role: 'Projeto Residencial · Aracaju' },
+    { quote: 'Profissional incrível. Entendeu a proposta da nossa empresa logo de cara e entregou um espaço que nossos clientes elogiam.', name: 'Carlos Mendes', role: 'Projeto Comercial · Aracaju' },
+    { quote: 'Prazos cumpridos, orçamento respeitado e um resultado final que superou todas as nossas expectativas.', name: 'Ana Rodrigues', role: 'Design de Interiores · Aracaju' },
+  ],
+  zoom: 100,
+};
+
+const palettes = {
+  terra:   { name: 'Terroso Quente',      colors: { primary: '#8B6F5C', accent: '#C4976A', bg: '#FAF7F4', dark: '#2C2420' } },
+  ocean:   { name: 'Oceano Sereno',       colors: { primary: '#2A5C8A', accent: '#4A8FAB', bg: '#F4F8FA', dark: '#1A2C3A' } },
+  sage:    { name: 'Verde Sálvia',        colors: { primary: '#5A7A5C', accent: '#8AAB6A', bg: '#F4F8F4', dark: '#1A2A1C' } },
+  noir:    { name: 'Noir Elegante',       colors: { primary: '#3A3A3A', accent: '#D4AF70', bg: '#FAFAFA', dark: '#1A1A1A' } },
+  rose:    { name: 'Rosa Contemporâneo',  colors: { primary: '#8A5C6A', accent: '#C4819A', bg: '#FAF4F6', dark: '#2A1C20' } },
+  midnight:{ name: 'Midnight Luxo',       colors: { primary: '#1E293B', accent: '#94A3B8', bg: '#F8FAFC', dark: '#0F172A' } },
+  terracotta:{ name: 'Terracotta',        colors: { primary: '#9A4B2C', accent: '#D4845A', bg: '#FDF8F4', dark: '#3A1A0C' } },
+};
+
+const fonts = {
+  cormorant: { name: 'Cormorant Garamond', preview: 'Aa', body: 'Jost', gUrl: 'Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500' },
+  playfair:  { name: 'Playfair Display',   preview: 'Aa', body: 'Lato', gUrl: 'Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400' },
+  dm:        { name: 'DM Serif Display',   preview: 'Aa', body: 'DM+Sans', gUrl: 'DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500' },
+  libre:     { name: 'Libre Baskerville',  preview: 'Aa', body: 'Nunito', gUrl: 'Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;500' },
+  fraunces:  { name: 'Fraunces',           preview: 'Aa', body: 'Inter', gUrl: 'Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:wght@300;400;500' },
+};
+
+// ===== INIT =====
+function init() {
+  renderSectionsList();
+  renderPalettes();
+  renderFonts();
+  renderCustomColors();
+  renderTestimonials();
+  renderPhotoSlots();
+  updatePreview();
+  updateStatusTime();
+  setInterval(updateStatusTime, 30000);
+}
+
+// ===== SECTIONS =====
+function renderSectionsList() {
+  const list = document.getElementById('sectionsList');
+  list.innerHTML = state.sections.map((s, i) => `
+    <div class="section-item ${s.enabled ? '' : 'disabled'}" data-index="${i}" draggable="true"
+         ondragstart="dragStart(event,${i})" ondragover="dragOver(event,${i})" ondrop="drop(event,${i})" ondragleave="dragLeave(event)">
+      <div class="section-item-inner">
+        <span class="section-drag-handle">⠿</span>
+        <span class="section-icon">${s.icon}</span>
+        <span class="section-name">${s.name}</span>
+        <button class="section-toggle ${s.enabled ? 'on' : ''}" onclick="toggleSection(${i})"></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleSection(i) {
+  state.sections[i].enabled = !state.sections[i].enabled;
+  renderSectionsList();
+  updatePreview();
+  showToast(state.sections[i].enabled ? `"${state.sections[i].name}" ativado` : `"${state.sections[i].name}" desativado`);
+}
+
+// ===== DRAG & DROP =====
+let dragIdx = null;
+function dragStart(e, i) { dragIdx = i; e.dataTransfer.effectAllowed = 'move'; }
+function dragOver(e, i) {
+  e.preventDefault();
+  document.querySelectorAll('.section-item').forEach(el => el.classList.remove('drag-over'));
+  document.querySelectorAll('.section-item')[i]?.classList.add('drag-over');
+}
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function drop(e, i) {
+  e.preventDefault();
+  if (dragIdx === null || dragIdx === i) return;
+  const moved = state.sections.splice(dragIdx, 1)[0];
+  state.sections.splice(i, 0, moved);
+  dragIdx = null;
+  renderSectionsList();
+  updatePreview();
+  showToast('Seções reordenadas');
+}
+
+// ===== PALETTES =====
+function renderPalettes() {
+  document.getElementById('paletteList').innerHTML = Object.entries(palettes).map(([key, p]) => `
+    <div class="palette-option ${state.palette === key ? 'active' : ''}" onclick="selectPalette('${key}')">
+      <div class="palette-swatches">
+        <div class="swatch" style="background:${p.colors.primary}"></div>
+        <div class="swatch" style="background:${p.colors.accent}"></div>
+        <div class="swatch" style="background:${p.colors.bg}; border:1px solid rgba(255,255,255,0.1)"></div>
+        <div class="swatch" style="background:${p.colors.dark}"></div>
+      </div>
+      <span class="palette-name">${p.name}</span>
+    </div>
+  `).join('');
+}
+
+function selectPalette(key) {
+  state.palette = key;
+  const p = palettes[key].colors;
+  state.customColors = { ...p };
+  renderPalettes();
+  renderCustomColors();
+  updatePreview();
+  showToast('Paleta: ' + palettes[key].name);
+}
+
+function renderCustomColors() {
+  const labels = { primary: 'Primária', accent: 'Destaque', bg: 'Fundo', dark: 'Escura' };
+  document.getElementById('colorCustom').innerHTML = Object.entries(state.customColors).map(([key, val]) => `
+    <div class="color-input-group">
+      <label>${labels[key]}</label>
+      <div class="color-input-row">
+        <input type="color" value="${val}" oninput="setCustomColor('${key}', this.value)">
+        <input type="text" value="${val}" oninput="setCustomColor('${key}', this.value)" maxlength="7">
+      </div>
+    </div>
+  `).join('');
+}
+
+function setCustomColor(key, val) {
+  state.customColors[key] = val;
+  state.palette = 'custom';
+  renderPalettes();
+  updatePreview();
+}
+
+// ===== FONTS =====
+function renderFonts() {
+  document.getElementById('fontList').innerHTML = Object.entries(fonts).map(([key, f]) => `
+    <div class="font-option ${state.font === key ? 'active' : ''}" onclick="selectFont('${key}')">
+      <span class="font-preview" style="font-family:'${f.name}', serif">${f.name}</span>
+      <span class="font-meta">+ ${f.body}</span>
+    </div>
+  `).join('');
+}
+
+function selectFont(key) {
+  state.font = key;
+  renderFonts();
+  updatePreview();
+  showToast('Fonte: ' + fonts[key].name);
+}
+
+// ===== TESTIMONIALS =====
+function renderTestimonials() {
+  document.getElementById('testimonialsList').innerHTML = state.testimonials.map((t, i) => `
+    <div class="testimonial-item">
+      <span class="t-label"><span class="mi" style="font-size:14px">format_quote</span> Depoimento ${i+1}</span>
+      <textarea placeholder="Texto do depoimento..." oninput="updateTestimonial(${i},'quote',this.value)">${t.quote}</textarea>
+      <input type="text" placeholder="Nome do cliente" value="${t.name}" oninput="updateTestimonial(${i},'name',this.value)">
+      <input type="text" placeholder="Projeto · Cidade" value="${t.role}" oninput="updateTestimonial(${i},'role',this.value)">
+    </div>
+  `).join('');
+}
+
+function updateTestimonial(i, key, val) { state.testimonials[i][key] = val; updatePreview(); }
+
+// ===== PHOTOS =====
+function renderPhotoSlots() {
+  const labels = ['Destaque', 'Projeto 2', 'Projeto 3', 'Projeto 4', 'Projeto 5', 'Projeto 6'];
+  document.getElementById('portfolioPhotos').innerHTML = labels.map((label, i) => `
+    <div class="photo-slot" onclick="triggerPhoto('pf-${i}')">
+      <input type="file" id="pf-${i}" accept="image/*" onchange="loadPhoto(this,'pf-slot-${i}')" style="display:none">
+      <div id="pf-slot-${i}-content">
+        <div class="photo-slot-icon">🖼</div>
+      </div>
+      <img id="pf-slot-${i}" style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+      <div class="photo-slot-name">${label}</div>
+    </div>
+  `).join('');
+}
+
+function triggerPhoto(id) { document.getElementById(id)?.click(); }
+
+function loadPhoto(input, slotId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = document.getElementById(slotId);
+    const content = document.getElementById(slotId + '-content');
+    if (img) { img.src = e.target.result; img.style.display = 'block'; }
+    if (content) content.style.display = 'none';
+    state.photos[slotId] = e.target.result;
+    updatePreview();
+    showToast('Foto carregada!');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== DEVICE =====
+function setDevice(device, btn) {
+  document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const container = document.getElementById('previewContainer');
+  container.className = `preview-container ${device}`;
+  const iframe = document.getElementById('preview');
+  iframe.style.height = device === 'mobile' ? '812px' : device === 'tablet' ? '1024px' : '800px';
+}
+
+// ===== ZOOM =====
+function zoomPreview(delta) {
+  state.zoom = Math.max(50, Math.min(150, state.zoom + delta));
+  document.getElementById('zoomVal').textContent = state.zoom + '%';
+  const container = document.getElementById('previewContainer');
+  container.style.transform = `scale(${state.zoom / 100})`;
+  container.style.transformOrigin = 'top center';
+}
+
+// ===== UPDATE PREVIEW =====
+let previewTimeout;
+function updatePreview() {
+  clearTimeout(previewTimeout);
+  previewTimeout = setTimeout(() => {
+    const html = generateHTML();
+    document.getElementById('preview').srcdoc = html;
+    const name = document.getElementById('d-name').value || 'arquiteta';
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    document.getElementById('previewUrl').textContent = `${slug}.vercel.app`;
+    document.getElementById('clientName').value = name;
+    document.getElementById('statusMsg').textContent = `Atualizado · ${state.sections.filter(s=>s.enabled).length} seções ativas`;
+  }, 120);
+}
+
+function refreshPreview() {
+  const html = generateHTML();
+  document.getElementById('preview').srcdoc = '';
+  setTimeout(() => { document.getElementById('preview').srcdoc = html; }, 50);
+  showToast('Preview atualizado');
+}
+
+// ===== GENERATE HTML =====
+function generateHTML() {
+  const d = {
+    name: v('d-name'), city: v('d-city'),
+    slogan: v('d-slogan') || 'Espaços que contam',
+    slogan2: v('d-slogan2') || 'a sua história',
+    heroTag: v('d-hero-tag') || 'Arquitetura & Design',
+    cta1: v('d-cta1') || 'Solicitar Orçamento',
+    cta2: v('d-cta2') || 'Ver Projetos →',
+    desc: v('d-desc'), whats: v('d-whats'), insta: v('d-insta'),
+    email: v('d-email'), stat1: v('d-stat1'), stat2: v('d-stat2'),
+    stat3: v('d-stat3'), about1: v('d-about1'), about2: v('d-about2'),
+    tPortfolioTag: v('d-t-portfolio-tag') || 'Nosso Trabalho',
+    tPortfolio1: v('d-t-portfolio1') || 'Projetos que',
+    tPortfolio2: v('d-t-portfolio2') || 'inspiram',
+    tSobreTag: v('d-t-sobre-tag') || 'Quem sou eu',
+    tSobre1: v('d-t-sobre1') || 'Arquitetura com',
+    tSobre2: v('d-t-sobre2') || 'propósito',
+    tServTag: v('d-t-serv-tag') || 'O que ofereço',
+    tServ1: v('d-t-serv1') || 'Serviços',
+    tServ2: v('d-t-serv2') || 'personalizados',
+    tCont1: v('d-t-cont1') || 'Seu projeto começa',
+    tCont2: v('d-t-cont2') || 'aqui',
+    s1Title: v('d-s1-title') || 'Projeto Residencial',
+    s1Desc: v('d-s1-desc') || 'Do conceito à execução, criamos lares que equilibram estética, conforto e funcionalidade.',
+    s2Title: v('d-s2-title') || 'Design de Interiores',
+    s2Desc: v('d-s2-desc') || 'Ambientes com identidade própria, materiais cuidadosamente selecionados e harmonia.',
+    s3Title: v('d-s3-title') || 'Projeto Comercial',
+    s3Desc: v('d-s3-desc') || 'Espaços corporativos que comunicam a essência da sua marca.',
+  };
+  const c = state.customColors;
+  const f = fonts[state.font];
+
+  const sectionHTML = state.sections.filter(s => s.enabled).map(s => {
+    switch(s.id) {
+      case 'hero': return buildHero(d, c, f);
+      case 'stats': return buildStats(d, c);
+      case 'portfolio': return buildPortfolio(c, d);
+      case 'sobre': return buildSobre(d, c);
+      case 'servicos': return buildServicos(c, d);
+      case 'depoimentos': return buildDepoimentos(c);
+      case 'processo': return buildProcesso(c);
+      case 'contato': return buildContato(d, c);
+      default: return '';
+    }
+  }).join('\n');
+
+  // Build script tags as variables so the HTML parser never sees them inside JS source
+  const SO = '<' + 'script>';
+  const SC = '</' + 'script>';
+
+  const headScript = SO + "document.documentElement.classList.add('js-ready');" + SC;
+
+  const bodyScript = SO + `
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('sc',scrollY>50)});
+/* Reveal animation */
+document.querySelectorAll('.reveal').forEach(el => el.classList.add('v'));
+setTimeout(() => {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.remove('v'));
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('v'); obs.unobserve(e.target); }
+  }), {threshold: 0.01});
+  document.querySelectorAll('.reveal').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight + 50) { el.classList.add('v'); }
+    else { obs.observe(el); }
+  });
+}, 50);
+/* Testimonials slider */
+let _cs=0;
+function goSlide(n){
+  _cs=n;
+  const track=document.getElementById('dtrack');
+  const dots=document.querySelectorAll('#ddots button');
+  const sec=document.getElementById('depoimentos');
+  const accent=sec?sec.dataset.accent:'#C4976A';
+  if(track) track.style.transform='translateX(-'+n*100+'%)';
+  dots.forEach((b,i)=>{b.style.width=i===n?'28px':'8px';b.style.background=i===n?accent:'rgba(255,255,255,.15)';});
+}
+(function(){
+  const total=document.querySelectorAll('#dtrack > div').length;
+  if(total>1) setInterval(()=>{ _cs=(_cs+1)%total; goSlide(_cs); },6000);
+})();
+/* Counter animation */
+document.querySelectorAll('[data-count]').forEach(el => {
+  const target = el.getAttribute('data-count');
+  const num = parseInt(target);
+  if(isNaN(num)) { el.textContent = target; return; }
+  const suffix = target.replace(/[0-9]/g,'');
+  let current = 0;
+  const inc = Math.ceil(num / 40);
+  const obs2 = new IntersectionObserver(es => {
+    if(es[0].isIntersecting) {
+      const timer = setInterval(() => {
+        current += inc;
+        if(current >= num) { current = num; clearInterval(timer); }
+        el.textContent = current + suffix;
+      }, 30);
+      obs2.unobserve(el);
+    }
+  }, {threshold:.5});
+  obs2.observe(el);
+});
+` + SC;
+
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${d.name} Arquitetura</title>
+${headScript}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=${f.gUrl}&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:'${f.body}',sans-serif;background:${c.bg};color:${c.dark};overflow-x:hidden}
+img{display:block;width:100%;object-fit:cover}a{text-decoration:none;color:inherit}
+:root{--p:${c.primary};--a:${c.accent};--bg:${c.bg};--dark:${c.dark}}
+nav{position:fixed;top:0;width:100%;z-index:100;padding:22px 48px;display:flex;justify-content:space-between;align-items:center;transition:.5s cubic-bezier(.4,0,.2,1)}
+nav.sc{background:rgba(250,247,244,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:14px 48px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.nl{font-family:'${f.name}',serif;font-size:1.35rem;font-weight:300;color:#fff;letter-spacing:.06em;transition:.4s}
+nav.sc .nl{color:${c.dark}}.nu{display:flex;gap:36px;list-style:none}
+.nu a{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.75);transition:.3s;position:relative}
+.nu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:${c.accent};transition:width .3s}
+.nu a:hover::after{width:100%}
+nav.sc .nu a{color:${c.primary}}.nu a:hover{color:${c.accent}!important}
+.js-ready .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.reveal.v,.js-ready .reveal.v{opacity:1;transform:translateY(0)}.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+@keyframes fU{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}
+@media(max-width:1024px){
+  #sobre{grid-template-columns:1fr!important;gap:0!important;padding:72px 32px 80px!important}
+  #sobre .sobre-photo{height:380px!important}
+  #sobre .sobre-badge{right:0!important;bottom:-16px!important}
+  #sobre .sobre-text-col{padding-top:52px!important}
+  #contato{grid-template-columns:1fr!important}
+  #contato .cont-form{padding:72px 32px!important}
+  #contato .cont-info{padding:56px 32px!important}
+}
+@media(max-width:768px){
+  nav{padding:18px 20px!important}nav.sc{padding:12px 20px!important}.nu{display:none!important}
+  #stats .stats-grid{grid-template-columns:1fr!important}
+  #stats .stats-item{border-right:none!important;border-bottom:1px solid rgba(255,255,255,.06)!important}
+  #portfolio{padding:48px 16px!important}
+  .pf-grid{grid-template-columns:1fr!important;grid-template-rows:auto!important}
+  .pf-grid>div{grid-column:span 1!important;grid-row:span 1!important;height:200px!important}
+  #sobre{grid-template-columns:1fr!important;gap:0!important;padding:56px 20px 64px!important}
+  #sobre .sobre-photo{height:340px!important}
+  #sobre .sobre-badge{right:0!important;bottom:-16px!important}
+  #sobre .sobre-text-col{padding-top:48px!important}
+  #servicos{padding:56px 20px!important}
+  #servicos .serv-grid{grid-template-columns:1fr!important}
+  #depoimentos{padding:56px 20px!important}
+  #processo{padding:56px 20px!important}
+  #processo .proc-grid{grid-template-columns:1fr 1fr!important;gap:28px!important}
+  #contato{grid-template-columns:1fr!important}
+  #contato .cont-form{padding:56px 20px!important}
+  #contato .cont-info{padding:48px 20px!important}
+  footer{padding:28px 20px!important;flex-direction:column!important;text-align:center!important;gap:12px!important}
+}
+</style>
+</head>
+<body>
+<nav id="nav">
+  <a class="nl" href="#">${d.name}</a>
+  <ul class="nu">
+    <li><a href="#portfolio">Portfólio</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+</nav>
+${sectionHTML}
+<footer style="background:${c.dark};padding:40px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+  <div style="font-family:'${f.name}',serif;font-size:1rem;font-weight:300;color:rgba(255,255,255,.4);letter-spacing:.06em">${d.name} Arquitetura</div>
+  <div style="display:flex;gap:20px;align-items:center">
+    <a href="https://instagram.com/${d.insta}" target="_blank" style="color:rgba(255,255,255,.3);transition:.3s" onmouseover="this.style.color='${c.accent}'" onmouseout="this.style.color='rgba(255,255,255,.3)'"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/></svg></a>
+    <a href="https://wa.me/55${d.whats}" target="_blank" style="color:rgba(255,255,255,.3);transition:.3s" onmouseover="this.style.color='${c.accent}'" onmouseout="this.style.color='rgba(255,255,255,.3)'"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.545-1.369A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.885.813.823-3.79-.234-.37A9.818 9.818 0 012.182 12c0-5.42 4.398-9.818 9.818-9.818 5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg></a>
+  </div>
+  <div style="font-size:.65rem;color:rgba(255,255,255,.15)">© ${new Date().getFullYear()} ${d.name}. Todos os direitos reservados.</div>
+</footer>
+${bodyScript}
+</body></html>`;
+}
+
+function v(id) { return document.getElementById(id)?.value || ''; }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ===== SECTION BUILDERS =====
+function buildHero(d, c, f) {
+  const heroBg = state.photos['slot-hero'];
+
+  // ── MODO SPLIT: foto à direita, texto à esquerda ──
+  if (heroBg) {
+    return `<style>
+  #hs{display:grid;grid-template-columns:1fr 1fr;min-height:500px;max-height:780px;height:75vh;position:relative;overflow:hidden;background:${c.dark}}
+  #hs .hs-text{padding:120px 56px 56px 48px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;z-index:2}
+  #hs .hs-photo{position:relative;overflow:hidden}
+  #hs .hs-photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+  #hs .hs-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,${c.dark} 0%,transparent 30%)}
+  #hs .ht{font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  #hs h1{font-family:'${f.name}',serif;font-size:clamp(2.2rem,4vw,4.2rem);font-weight:300;line-height:1.08;margin-bottom:20px}
+  #hs .hd{font-size:.88rem;line-height:1.85;color:rgba(255,255,255,.55);max-width:380px;margin-bottom:32px}
+  #hs .hb a{display:inline-block;letter-spacing:.13em;text-transform:uppercase;font-size:.72rem;white-space:nowrap;transition:.3s}
+  #hs .hb{display:flex;gap:12px;flex-wrap:wrap}
+  @media(max-width:1024px){
+    #hs{grid-template-columns:1fr;height:auto;max-height:unset}
+    #hs .hs-text{padding:100px 32px 48px;justify-content:flex-end}
+    #hs .hs-photo{height:340px}
+    #hs .hs-photo::after{background:linear-gradient(to top,${c.dark} 0%,transparent 40%)}
+    #hs h1{font-size:clamp(1.85rem,5vw,2.8rem);margin-bottom:12px}
+    #hs .ht{font-size:.6rem;margin-bottom:8px}
+  }
+  @media(max-width:768px){
+    #hs .hs-text{padding:72px 20px 36px}
+    #hs .hs-photo{height:260px}
+    #hs h1{font-size:clamp(1.7rem,7vw,2.4rem);margin-bottom:10px}
+    #hs .hd{display:none}
+    #hs .hb a{padding:12px 16px!important;font-size:.65rem}
+  }
+</style>
+<section id="hs">
+  <div class="hs-text">
+    <p class="ht"><span style="width:24px;height:1px;background:${c.accent};flex-shrink:0"></span>${escHtml(d.heroTag)} · ${escHtml(d.city)}</p>
+    <h1>
+      <span style="color:#fff;display:block">${escHtml(d.slogan)}</span>
+      <em style="color:${c.accent};font-style:italic;display:block">${escHtml(d.slogan2)}</em>
+    </h1>
+    <p class="hd">${escHtml(d.desc)}</p>
+    <div class="hb">
+      <a href="https://wa.me/55${d.whats}" target="_blank" style="padding:13px 26px;background:${c.accent};color:${c.dark};font-weight:500" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${escHtml(d.cta1)}</a>
+      <a href="#portfolio" style="padding:13px 26px;border:1px solid rgba(255,255,255,.3);color:#fff" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background=''">${escHtml(d.cta2)}</a>
+    </div>
+  </div>
+  <div class="hs-photo">
+    <img src="${heroBg}" alt="Hero">
+  </div>
+</section>`;
+  }
+
+  // ── MODO GRADIENTE: sem foto ──
+  return `<style>
+  #hs{height:75vh;min-height:500px;max-height:780px;padding:120px 48px 56px;position:relative;display:flex;align-items:flex-end;overflow:hidden;background:linear-gradient(135deg,${c.dark} 0%,${c.primary} 50%,${c.accent} 100%)}
+  #hs .ht{font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  #hs h1{font-family:'${f.name}',serif;font-size:clamp(2.6rem,5.5vw,5.2rem);font-weight:300;line-height:1.08;margin-bottom:20px}
+  #hs .hd{font-size:.88rem;line-height:1.85;color:rgba(255,255,255,.55);max-width:420px;margin-bottom:32px}
+  #hs .hb a{display:inline-block;letter-spacing:.13em;text-transform:uppercase;font-size:.72rem;white-space:nowrap;transition:.3s}
+  #hs .hb{display:flex;gap:12px;flex-wrap:wrap}
+  .hdeco{position:absolute}
+  @media(max-width:1024px){
+    #hs{height:auto;min-height:unset;padding:100px 32px 44px}
+    #hs h1{font-size:clamp(1.85rem,5.5vw,2.8rem);margin-bottom:12px}
+    #hs .ht{font-size:.6rem;margin-bottom:8px}
+    #hs .hd{font-size:.82rem;margin-bottom:20px}
+    #hs .hb a{padding:11px 18px!important;font-size:.67rem}
+    .hdeco{display:none}
+  }
+  @media(max-width:768px){
+    #hs{padding:80px 20px 36px}
+    #hs h1{font-size:clamp(1.7rem,7vw,2.4rem);margin-bottom:10px}
+    #hs .ht{font-size:.58rem;margin-bottom:8px}
+    #hs .hd{display:none}
+    #hs .hb a{padding:12px 16px!important;font-size:.65rem}
+  }
+</style>
+<section id="hs">
+  <div style="position:absolute;inset:0;opacity:.15;background:rgba(0,0,0,.2)"></div>
+  <div style="position:absolute;inset:0;opacity:.04;background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');background-size:128px 128px"></div>
+  <div class="hdeco" style="top:120px;right:48px;width:1px;height:100px;background:linear-gradient(to bottom,transparent,${c.accent}44,transparent);animation:pulse 3s ease-in-out infinite"></div>
+  <div class="hdeco" style="bottom:140px;right:48px;width:70px;height:1px;background:linear-gradient(to right,transparent,${c.accent}44,transparent);animation:pulse 3s ease-in-out infinite 1s"></div>
+  <div style="position:relative;z-index:2;max-width:700px;width:100%">
+    <p class="ht"><span style="width:24px;height:1px;background:${c.accent};flex-shrink:0"></span>${escHtml(d.heroTag)} · ${escHtml(d.city)}</p>
+    <h1>
+      <span style="color:#fff;display:block">${escHtml(d.slogan)}</span>
+      <em style="color:${c.accent};font-style:italic;display:block">${escHtml(d.slogan2)}</em>
+    </h1>
+    <p class="hd">${escHtml(d.desc)}</p>
+    <div class="hb">
+      <a href="https://wa.me/55${d.whats}" target="_blank" style="padding:13px 26px;background:${c.accent};color:${c.dark};font-weight:500" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${escHtml(d.cta1)}</a>
+      <a href="#portfolio" style="padding:13px 26px;border:1px solid rgba(255,255,255,.3);color:#fff" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background=''">${escHtml(d.cta2)}</a>
+    </div>
+  </div>
+  <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:float 2.5s ease-in-out infinite">
+    <span style="font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.2)">Scroll</span>
+    <div style="width:1px;height:16px;background:linear-gradient(to bottom,rgba(255,255,255,.25),transparent)"></div>
+  </div>
+</section>`;
+}
+
+function buildStats(d, c) {
+  const items = [
+    { n: d.stat1, l: 'Projetos Realizados' },
+    { n: d.stat2, l: 'Clientes Satisfeitos' },
+    { n: d.stat3, l: 'Anos de Experiência' },
+  ];
+  return `<section id="stats" style="background:${c.dark}">
+  <div class="stats-grid" style="display:grid;grid-template-columns:repeat(3,1fr)">
+  ${items.map((item, i) => `
+    <div class="stats-item reveal ${i>0?'rd'+i:''}" style="padding:48px 32px;border-right:1px solid rgba(255,255,255,.06);text-align:center${i===2?';border-right:none':''}">
+      <div data-count="${item.n}" style="font-family:serif;font-size:3.4rem;font-weight:300;color:${c.accent};line-height:1;margin-bottom:10px">0</div>
+      <div style="font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.28)">${item.l}</div>
+    </div>
+  `).join('')}
+  </div>
+</section>`;
+}
+
+function buildPortfolio(c, d) {
+  const photos = state.photos;
+  const projects = [
+    { label: 'Residência Moderna', cat: 'Residencial', slot: 'pf-slot-0' },
+    { label: 'Sala de Estar', cat: 'Interiores', slot: 'pf-slot-1' },
+    { label: 'Suíte Master', cat: 'Interiores', slot: 'pf-slot-2' },
+    { label: 'Espaço Corporativo', cat: 'Comercial', slot: 'pf-slot-3' },
+    { label: 'Banheiro', cat: 'Interiores', slot: 'pf-slot-4' },
+    { label: 'Cozinha', cat: 'Interiores', slot: 'pf-slot-5' },
+  ];
+  const placeholderColors = ['#8B6F5C','#C4A882','#9A7A64','#D4B896','#7A6050','#B89878'];
+  const layouts = [
+    'grid-column:span 7;grid-row:span 2;',
+    'grid-column:span 5;',
+    'grid-column:span 5;',
+    'grid-column:span 4;',
+    'grid-column:span 4;',
+    'grid-column:span 4;',
+  ];
+  const heights = ['100%', '220px', '220px', '260px', '260px', '260px'];
+
+  const items = projects.map((p, i) => {
+    const photoSrc = photos[p.slot];
+    const bg = photoSrc
+      ? `background:url('${photoSrc}') center/cover no-repeat`
+      : `background:${placeholderColors[i]}`;
+    const h = i === 0 ? '' : `height:${heights[i]};`;
+    return `<div style="position:relative;overflow:hidden;${h}${layouts[i]}${bg};cursor:pointer;transition:transform .5s cubic-bezier(.4,0,.2,1)"
+      onmouseover="this.querySelector('.ov').style.opacity=0;this.querySelector('.ov-img').style.transform='scale(1.06)'"
+      onmouseout="this.querySelector('.ov').style.opacity=1;this.querySelector('.ov-img').style.transform='scale(1)'">
+      <div class="ov-img" style="position:absolute;inset:0;${bg};transition:transform .6s cubic-bezier(.4,0,.2,1)"></div>
+      ${!photoSrc ? `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);font-size:.68rem;letter-spacing:.15em;text-align:center;padding:12px;z-index:1">📷<br>Sem foto</div>` : ''}
+      <div class="ov" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.1) 55%,transparent 100%);opacity:1;transition:.4s ease;padding:20px;display:flex;align-items:flex-end;z-index:2">
+        <div>
+          <div style="font-family:serif;font-size:1.25rem;font-weight:300;color:#fff;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.5)">${p.label}</div>
+          <div style="font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:${c.accent}">${p.cat}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  return `<section id="portfolio" style="padding:90px 48px;background:${c.bg};overflow:hidden">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:52px;flex-wrap:wrap;gap:20px">
+    <div>
+      <span class="reveal" style="display:flex;align-items:center;gap:10px;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};margin-bottom:14px"><span style="width:24px;height:1px;background:${c.accent}"></span>${escHtml(d.tPortfolioTag)}</span>
+      <h2 class="reveal" style="font-family:serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:${c.dark}">${escHtml(d.tPortfolio1)} <em style="font-style:italic;color:${c.primary}">${escHtml(d.tPortfolio2)}</em></h2>
+    </div>
+  </div>
+  <div class="pf-grid" style="display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:220px 220px 260px;gap:10px;overflow:hidden">
+    ${items.join('')}
+  </div>
+</section>`;
+}
+
+function buildSobre(d, c) {
+  const photo = state.photos['slot-architect'];
+  return `<section id="sobre" style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:100px 48px;background:#f0e8de;overflow:hidden">
+  <div class="reveal" style="position:relative;padding-right:32px">
+    <div style="position:relative;isolation:isolate">
+      <div style="position:absolute;top:-16px;left:-16px;width:55%;height:55%;border:1px solid ${c.accent}66;opacity:.4;z-index:0;pointer-events:none"></div>
+      <div class="sobre-photo" style="height:540px;background:${photo ? `url('${photo}') center top/cover` : `linear-gradient(135deg,${c.primary},${c.dark})`};position:relative;z-index:1;display:flex;align-items:center;justify-content:center;overflow:hidden">
+        ${!photo ? `<span style="color:rgba(255,255,255,.2);font-size:.7rem;letter-spacing:.2em">Foto da Arquiteta</span>` : ''}
+      </div>
+      <div class="sobre-badge" style="position:absolute;bottom:-24px;right:-8px;background:${c.dark};padding:22px 28px;z-index:2;box-shadow:0 12px 40px rgba(0,0,0,.25)">
+        <div style="font-family:serif;font-size:2.4rem;color:${c.accent};font-weight:300;line-height:1">${d.stat3}</div>
+        <div style="font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:6px">Anos de<br>Experiência</div>
+      </div>
+    </div>
+  </div>
+  <div class="reveal rd1 sobre-text-col" style="padding-top:20px">
+    <span style="font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="width:24px;height:1px;background:${c.accent}"></span>${escHtml(d.tSobreTag)}</span>
+    <h2 style="font-family:serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:${c.dark};margin-bottom:28px;line-height:1.1">${escHtml(d.tSobre1)} <em style="font-style:italic;color:${c.primary}">${escHtml(d.tSobre2)}</em></h2>
+    <p style="font-size:.88rem;line-height:1.9;color:#7a6a5a;margin-bottom:16px">${escHtml(d.about1)}</p>
+    <p style="font-size:.88rem;line-height:1.9;color:#7a6a5a">${escHtml(d.about2)}</p>
+    <div style="margin-top:32px;display:flex;flex-wrap:wrap;gap:8px">
+      ${['AutoCAD','Revit','SketchUp','V-Ray','Lumion'].map(s => `<span style="padding:6px 16px;border:1px solid ${c.accent}66;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:${c.primary};transition:.3s" onmouseover="this.style.background='${c.accent}22';this.style.borderColor='${c.accent}'" onmouseout="this.style.background='';this.style.borderColor='${c.accent}66'">${s}</span>`).join('')}
+    </div>
+  </div>
+</section>`;
+}
+
+function buildServicos(c, d) {
+  const servs = [
+    { icon: '⬡', n: '01', t: d.s1Title, p: d.s1Desc },
+    { icon: '◇', n: '02', t: d.s2Title, p: d.s2Desc },
+    { icon: '△', n: '03', t: d.s3Title, p: d.s3Desc },
+  ];
+  return `<section id="servicos" style="padding:90px 48px;background:${c.bg}">
+  <div style="text-align:center;margin-bottom:56px">
+    <span class="reveal" style="display:inline-flex;align-items:center;gap:10px;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};margin-bottom:14px"><span style="width:24px;height:1px;background:${c.accent}"></span>${escHtml(d.tServTag)}<span style="width:24px;height:1px;background:${c.accent}"></span></span>
+    <h2 class="reveal" style="font-family:serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:${c.dark}">${escHtml(d.tServ1)} <em style="font-style:italic;color:${c.primary}">${escHtml(d.tServ2)}</em></h2>
+  </div>
+  <div class="serv-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:${c.accent}22;border:1px solid ${c.accent}22">
+    ${servs.map((s,i) => `
+      <div class="reveal ${i>0?'rd'+i:''}" style="background:${c.bg};padding:48px 36px;transition:.5s cubic-bezier(.4,0,.2,1);cursor:default;position:relative;overflow:hidden"
+        onmouseover="this.style.background='${lightenHex(c.bg,-8)}';this.querySelector('.serv-line').style.width='60px'"
+        onmouseout="this.style.background='${c.bg}';this.querySelector('.serv-line').style.width='0'">
+        <div style="font-family:serif;font-size:3.8rem;font-weight:300;color:${c.accent}33;line-height:1;margin-bottom:22px">${s.n}</div>
+        <h3 style="font-family:serif;font-size:1.4rem;font-weight:400;color:${c.dark};margin-bottom:14px">${escHtml(s.t)}</h3>
+        <div class="serv-line" style="width:0;height:1px;background:${c.accent};transition:width .5s;margin-bottom:14px"></div>
+        <p style="font-size:.83rem;line-height:1.85;color:#8a7a6a">${escHtml(s.p)}</p>
+      </div>
+    `).join('')}
+  </div>
+</section>`;
+}
+
+function buildDepoimentos(c) {
+  const t = state.testimonials;
+  return `<section id="depoimentos" style="background:${c.dark};padding:90px 48px;text-align:center;position:relative;overflow:hidden" data-accent="${c.accent}">
+  <div style="position:absolute;top:40px;left:50%;transform:translateX(-50%);font-family:serif;font-size:12rem;color:${c.accent}08;line-height:1;pointer-events:none">"</div>
+  <span class="reveal" style="font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};display:block;margin-bottom:14px">O que dizem</span>
+  <h2 class="reveal" style="font-family:serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:#fff;margin-bottom:60px">Clientes que <em style="font-style:italic;color:${c.accent}">confiam</em></h2>
+  <div style="position:relative;overflow:hidden">
+    <div id="dtrack" style="display:flex;transition:transform .7s cubic-bezier(.25,.46,.45,.94)">
+      ${t.map(item => `
+        <div style="min-width:100%;padding:0 8%">
+          <p style="font-family:serif;font-size:clamp(1.1rem,2.2vw,1.9rem);font-weight:300;font-style:italic;color:rgba(255,255,255,.75);line-height:1.65;margin-bottom:40px">"${item.quote}"</p>
+          <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+            <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${c.primary},${c.accent});display:flex;align-items:center;justify-content:center;font-family:serif;font-size:1.1rem;color:#fff;flex-shrink:0">${item.name.charAt(0)}</div>
+            <div style="text-align:left">
+              <div style="font-size:.83rem;color:#fff;font-weight:400">${item.name}</div>
+              <div style="font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:3px">${item.role}</div>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;gap:10px;margin-top:44px" id="ddots">
+    ${t.map((_, i) => `<button onclick="goSlide(${i})" id="dd${i}" style="width:${i===0?'28':'8'}px;height:4px;border-radius:2px;background:${i===0?c.accent:'rgba(255,255,255,.15)'};border:none;cursor:pointer;transition:.4s"></button>`).join('')}
+  </div>
+</section>`;
+}
+
+function buildProcesso(c) {
+  const steps = [
+    { n: '01', t: 'Escuta', p: 'Entendemos seus sonhos, rotina e necessidades antes de qualquer projeto.' },
+    { n: '02', t: 'Conceito', p: 'Desenvolvemos o conceito com referências, paleta de materiais e estudos.' },
+    { n: '03', t: 'Projeto', p: 'Plantas, perspectivas 3D e detalhamentos técnicos completos.' },
+    { n: '04', t: 'Acompanhamento', p: 'Presença constante na obra para garantir fidelidade ao projeto.' },
+  ];
+  return `<section id="processo" style="padding:90px 48px;background:#ede5db;position:relative;overflow:hidden">
+  <!-- Decorative bg element -->
+  <div style="position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;border:1px solid ${c.accent}15;pointer-events:none"></div>
+  <div style="text-align:center;margin-bottom:60px">
+    <span class="reveal" style="display:inline-flex;align-items:center;gap:10px;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};margin-bottom:14px"><span style="width:24px;height:1px;background:${c.accent}"></span>Como trabalho<span style="width:24px;height:1px;background:${c.accent}"></span></span>
+    <h2 class="reveal" style="font-family:serif;font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:${c.dark}">Um processo <em style="font-style:italic;color:${c.primary}">humanizado</em></h2>
+  </div>
+  <div class="proc-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:32px;position:relative">
+    <!-- Connection line -->
+    <div style="position:absolute;top:26px;left:13%;right:13%;height:1px;background:linear-gradient(90deg,transparent,${c.accent}44,transparent)"></div>
+    ${steps.map((s,i) => `
+      <div class="reveal ${i>0?'rd'+Math.min(i,3):''}">
+        <div style="width:52px;height:52px;border-radius:50%;background:${c.bg};border:2px solid ${c.accent}55;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-family:serif;font-size:1.1rem;color:${c.primary};position:relative;z-index:1;transition:.3s" onmouseover="this.style.background='${c.accent}';this.style.color='#fff';this.style.borderColor='${c.accent}'" onmouseout="this.style.background='${c.bg}';this.style.color='${c.primary}';this.style.borderColor='${c.accent}55'">${s.n}</div>
+        <h4 style="font-family:serif;font-size:1.05rem;font-weight:400;color:${c.dark};margin-bottom:10px;text-align:center">${s.t}</h4>
+        <p style="font-size:.8rem;line-height:1.75;color:#8a7a6a;text-align:center">${s.p}</p>
+      </div>
+    `).join('')}
+  </div>
+</section>`;
+}
+
+function buildContato(d, c) {
+  return `<section id="contato" style="display:grid;grid-template-columns:1fr 1fr">
+  <div class="cont-form" style="padding:90px 56px 90px 48px;background:${c.bg}">
+    <span class="reveal" style="display:flex;align-items:center;gap:10px;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${c.accent};margin-bottom:14px"><span style="width:24px;height:1px;background:${c.accent}"></span>Vamos conversar</span>
+    <h2 class="reveal" style="font-family:serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:${c.dark};margin-bottom:40px">${escHtml(d.tCont1)}<br><em style="font-style:italic;color:${c.primary}">${escHtml(d.tCont2)}</em></h2>
+    <form class="reveal rd1" onsubmit="const n=this.querySelector('input').value,m=this.querySelector('textarea').value;window.open('https://wa.me/55${d.whats}?text='+encodeURIComponent('Olá! Me chamo '+n+'. '+m),'_blank');return false;" style="display:flex;flex-direction:column;gap:24px">
+      <div>
+        <label style="font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#8a7a6a;display:block;margin-bottom:8px">Nome</label>
+        <input type="text" required placeholder="Seu nome" style="width:100%;border:none;border-bottom:1px solid ${c.accent}44;background:transparent;padding:12px 0;font-size:.88rem;outline:none;color:${c.dark};transition:.3s" onfocus="this.style.borderColor='${c.accent}'" onblur="this.style.borderColor='${c.accent}44'">
+      </div>
+      <div>
+        <label style="font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#8a7a6a;display:block;margin-bottom:8px">Mensagem</label>
+        <textarea placeholder="Conte sobre seu projeto..." rows="4" style="width:100%;border:none;border-bottom:1px solid ${c.accent}44;background:transparent;padding:12px 0;font-size:.88rem;outline:none;resize:none;color:${c.dark};transition:.3s" onfocus="this.style.borderColor='${c.accent}'" onblur="this.style.borderColor='${c.accent}44'"></textarea>
+      </div>
+      <button type="submit" style="padding:16px;background:${c.dark};color:#fff;border:none;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:.4s cubic-bezier(.4,0,.2,1)" onmouseover="this.style.background='${c.primary}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,.2)'" onmouseout="this.style.background='${c.dark}';this.style.transform='';this.style.boxShadow=''">Enviar via WhatsApp</button>
+    </form>
+  </div>
+  <div class="cont-info" style="padding:90px 48px 90px 56px;background:${c.primary};display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden">
+    <!-- Decorative circle -->
+    <div style="position:absolute;bottom:-80px;right:-80px;width:300px;height:300px;border-radius:50%;border:1px solid rgba(255,255,255,.06);pointer-events:none"></div>
+    <span class="reveal" style="font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:${lightenHex(c.accent,40)};display:block;margin-bottom:14px">Contato direto</span>
+    <h2 class="reveal" style="font-family:serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:#fff;margin-bottom:40px">Canais de <em style="font-style:italic;color:${c.accent}">atendimento</em></h2>
+    <div class="reveal rd1" style="display:flex;flex-direction:column;gap:12px">
+      <a href="https://wa.me/55${d.whats}" target="_blank" style="display:flex;align-items:center;gap:16px;padding:20px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;transition:.4s cubic-bezier(.4,0,.2,1);font-size:.83rem;border-radius:2px" onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.transform='translateX(4px)'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.transform=''">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.545-1.369A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.885.813.823-3.79-.234-.37A9.818 9.818 0 012.182 12c0-5.42 4.398-9.818 9.818-9.818 5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+        <div><div style="font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:3px">WhatsApp</div>(${d.whats.substring(0,2)}) ${d.whats.substring(2)}</div>
+      </a>
+      <a href="https://instagram.com/${d.insta}" target="_blank" style="display:flex;align-items:center;gap:16px;padding:20px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;transition:.4s cubic-bezier(.4,0,.2,1);font-size:.83rem;border-radius:2px" onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.transform='translateX(4px)'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.transform=''">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        <div><div style="font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:3px">Instagram</div>@${d.insta}</div>
+      </a>
+      <a href="mailto:${d.email}" style="display:flex;align-items:center;gap:16px;padding:20px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;transition:.4s cubic-bezier(.4,0,.2,1);font-size:.83rem;border-radius:2px" onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.transform='translateX(4px)'" onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.transform=''">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <div><div style="font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:3px">E-mail</div>${d.email}</div>
+      </a>
+    </div>
+  </div>
+</section>`;
+}
+
+// ===== UTILITY =====
+function lightenHex(hex, amount) {
+  try {
+    const num = parseInt(hex.replace('#',''), 16);
+    const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+    const g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + amount));
+    const b = Math.min(255, Math.max(0, (num & 0xff) + amount));
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  } catch { return hex; }
+}
+
+// ===== EXPORT =====
+function exportSite() {
+  const html = generateHTML();
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const name = (document.getElementById('d-name').value || 'arquiteta').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  a.download = `site-${name}.html`;
+  a.click();
+  showToast('Site exportado com sucesso!');
+}
+
+function openFullPreview() {
+  const html = generateHTML();
+  const w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
+function resetToDefaults() {
+  if (!confirm('Resetar todas as configurações para o padrão?')) return;
+  location.reload();
+}
+
+// ===== TABS =====
+document.querySelectorAll('.panel-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== TOAST =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastText').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ===== STATUS TIME =====
+function updateStatusTime() {
+  const now = new Date();
+  document.getElementById('statusTime').textContent = now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>
